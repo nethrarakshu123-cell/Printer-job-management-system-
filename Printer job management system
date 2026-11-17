@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 50
+
+struct PrintJob {
+    int jobId;
+    char documentName[50];
+    int pages;
+};
+
+struct PrintJob queue[MAX];
+
+int front = -1;
+int rear = -1;
+int nextId = 1;
+
+// Add a print job
+void addJob() {
+    if (rear == MAX - 1) {
+        printf("\nPrinter queue is full!\n");
+        return;
+    }
+
+    struct PrintJob job;
+
+    job.jobId = nextId++;
+
+    printf("\nEnter document name: ");
+    scanf(" %49[^\n]", job.documentName);
+
+    printf("Enter number of pages: ");
+    scanf("%d", &job.pages);
+
+    if (job.pages <= 0) {
+        printf("Invalid number of pages!\n");
+        nextId--;
+        return;
+    }
+
+    if (front == -1)
+        front = 0;
+
+    rear++;
+    queue[rear] = job;
+
+    printf("\nPrint job added successfully!\n");
+    printf("Job ID: %d\n", job.jobId);
+}
+
+// Print next job
+void printJob() {
+    if (front == -1 || front > rear) {
+        printf("\nNo print jobs available!\n");
+        return;
+    }
+
+    printf("\nPrinting document: %s\n",
+           queue[front].documentName);
+    printf("Job ID: %d\n", queue[front].jobId);
+    printf("Pages: %d\n", queue[front].pages);
+
+    printf("\nPrinting completed!\n");
+
+    front++;
+
+    if (front > rear) {
+        front = rear = -1;
+    }
+}
+
+// Display waiting jobs
+void displayJobs() {
+    int i;
+
+    if (front == -1) {
+        printf("\nPrinter queue is empty!\n");
+        return;
+    }
+
+    printf("\n--- Printer Waiting List ---\n");
+
+    for (i = front; i <= rear; i++) {
+        printf("\nJob ID: %d", queue[i].jobId);
+        printf("\nDocument: %s",
+               queue[i].documentName);
+        printf("\nPages: %d\n", queue[i].pages);
+    }
+}
+
+// View next job
+void nextJob() {
+    if (front == -1) {
+        printf("\nNo pending print jobs!\n");
+        return;
+    }
+
+    printf("\nNext document: %s\n",
+           queue[front].documentName);
+    printf("Job ID: %d\n", queue[front].jobId);
+}
+
+int main() {
+    int choice;
+
+    do {
+        printf("\n===== PRINTER JOB MANAGEMENT SYSTEM =====\n");
+        printf("1. Add Print Job\n");
+        printf("2. Print Next Job\n");
+        printf("3. Display Waiting Jobs\n");
+        printf("4. View Next Job\n");
+        printf("5. Exit\n");
+
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                addJob();
+                break;
+
+            case 2:
+                printJob();
+                break;
+
+            case 3:
+                displayJobs();
+                break;
+
+            case 4:
+                nextJob();
+                break;
+
+            case 5:
+                printf("\nThank you!\n");
+                break;
+
+            default:
+                printf("\nInvalid choice!\n");
+        }
+
+    } while (choice != 5);
+
+    return 0;
+}
